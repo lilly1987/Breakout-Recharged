@@ -22,6 +22,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\BepInEx\unhollowed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="BepInExConfigManager.Il2Cpp">
+      <HintPath>..\..\BepInEx\plugins\BepInExConfigManager.Il2Cpp.dll</HintPath>
+    </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>..\..\BepInEx\unhollowed\Il2Cppmscorlib.dll</HintPath>
     </Reference>

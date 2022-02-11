@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -11,6 +12,8 @@ namespace MyFirstPlugin
     {
         Harmony instance;
         private static ManualLogSource log;
+        private static ConfigEntry<bool> localPosition;
+        private static ConfigEntry<bool> loseHealth;
 
         public override void Load()
         {
@@ -20,6 +23,9 @@ namespace MyFirstPlugin
 
             instance?.UnpatchSelf();
             instance =Harmony.CreateAndPatchAll(typeof(Plugin));
+
+            localPosition=Config.Bind("Player_Ball", "localPosition", true);
+            loseHealth = Config.Bind("Gameplay", "loseHealth", true);
         }
 
         public override bool Unload()
@@ -39,6 +45,8 @@ namespace MyFirstPlugin
         [HarmonyPrefix]
         public static void LoseHealth(Gameplay __instance)
         {
+            if (!loseHealth.Value)
+                return;
             log.LogInfo($"Gameplay.LoseHealth");
             __instance.AddHealth();
         }
@@ -88,6 +96,9 @@ namespace MyFirstPlugin
         [HarmonyPostfix]
         public static void Player_Ball_Update(Player_Ball __instance)
         {
+            if (!localPosition.Value)            
+                return;
+            
             var v = __instance.transform.localPosition;
             // -3.3 3.7
             //log.LogInfo($"Player_Ball.Update {v}");

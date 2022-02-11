@@ -13,7 +13,11 @@ namespace MyFirstPlugin
         Harmony instance;
         private static ManualLogSource log;
         private static ConfigEntry<bool> localPosition;
+        private static ConfigEntry<bool> localPositionLog;
         private static ConfigEntry<bool> loseHealth;
+        private static ConfigEntry<bool> powerupTimerMax;
+        private static ConfigEntry<bool> applyDamage;
+        private static ConfigEntry<bool> enemy_Bullet_Update;
 
         public override void Load()
         {
@@ -24,8 +28,31 @@ namespace MyFirstPlugin
             instance?.UnpatchSelf();
             instance =Harmony.CreateAndPatchAll(typeof(Plugin));
 
-            localPosition=Config.Bind("Player_Ball", "localPosition", true);
             loseHealth = Config.Bind("Gameplay", "loseHealth", true);
+            localPosition=Config.Bind("Player_Ball", "localPosition", true);
+            localPositionLog = Config.Bind("Player_Ball", "log", true);
+            powerupTimerMax = Config.Bind("Player01", "powerupTimerMax", true);
+            applyDamage = Config.Bind("BrickTrap", "applyDamage", true);
+            enemy_Bullet_Update = Config.Bind("enemy_Bullet", "Update", true);
+
+            loseHealth.SettingChanged += LoseHealth_SettingChanged; ;
+            localPosition.SettingChanged += LocalPosition_SettingChanged; ;
+            localPositionLog.SettingChanged += LocalPositionLog_SettingChanged;
+        }
+
+        private void LocalPosition_SettingChanged(object sender, System.EventArgs e)
+        {
+            Log.LogMessage($"localPosition {localPosition.Value}");
+        }
+
+        private void LoseHealth_SettingChanged(object sender, System.EventArgs e)
+        {
+            Log.LogMessage($"loseHealth {loseHealth.Value}");
+        }
+
+        private void LocalPositionLog_SettingChanged(object sender, System.EventArgs e)
+        {
+            Log.LogMessage($"localPositionLog {localPositionLog.Value}");
         }
 
         public override bool Unload()
@@ -49,7 +76,47 @@ namespace MyFirstPlugin
                 return;
             log.LogInfo($"Gameplay.LoseHealth");
             __instance.AddHealth();
+        }        
+        
+        /// <summary>
+        /// succ
+        /// </summary>
+        /// <param name="__instance"></param>
+        [HarmonyPatch(typeof(Enemy_Bullet), "Update")]
+        [HarmonyPrefix]
+        public static void Enemy_Bullet_Update(Enemy_Bullet __instance)
+        {
+            if (!enemy_Bullet_Update.Value)
+                return;
+            var v = __instance.transform.localPosition;
+            log.LogInfo($"Enemy_Bullet.Update {v}");
+            v.y = -4f;
+            __instance.transform.localPosition = v;
+        }        
+        
+        [HarmonyPatch(typeof(Player01), "powerupTimerMax",MethodType.Setter)]
+        [HarmonyPrefix]
+        public static void powerupTimerMaxPre(Player01 __instance, float __0)
+        {
+            if (!powerupTimerMax.Value)
+                return;
+
+            log.LogInfo($"Player01.powerupTimerMax {__0}");
+            __0 *= 100;
+            __instance.powerupTimer= __0;
         }
+        
+        //[HarmonyPatch(typeof(BrickTurret), "ApplyDamage")]
+        //[HarmonyPatch(typeof(BrickTrap), "ApplyDamage")]
+        //[HarmonyPrefix]
+        //public static bool ApplyDamage()
+        //{
+        //    if (!applyDamage.Value)
+        //        return true;
+        //
+        //    log.LogInfo($"BrickTrap.ApplyDamage ");
+        //    return false;
+        //}
         
         /// <summary>
         /// succ???
@@ -83,7 +150,7 @@ namespace MyFirstPlugin
                 log.LogInfo($"Player_Ball.Start {g.Count}");
                 foreach (GameObject item in g)
                 {
-                    item.transform.localScale.Set(2, 2, 2);
+                    item.transform.localScale*=2;
                 }
             }
         }
@@ -96,12 +163,14 @@ namespace MyFirstPlugin
         [HarmonyPostfix]
         public static void Player_Ball_Update(Player_Ball __instance)
         {
+            var v = __instance.transform.localPosition;
+            if (localPositionLog.Value)            
+                log.LogInfo($"Player_Ball.Update {v}");
+            
             if (!localPosition.Value)            
                 return;
             
-            var v = __instance.transform.localPosition;
             // -3.3 3.7
-            //log.LogInfo($"Player_Ball.Update {v}");
             if (v.y<=-3.4)
             {
                 v.y = 3.7F;

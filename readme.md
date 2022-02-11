@@ -10,3 +10,9 @@ https://builds.bepinex.dev/projects/bepinex_be/546/BepInEx_UnityIL2CPP_x64_1504d
 - BepInExConfigManager.Il2Cpp
 https://github.com/sinai-dev/BepInExConfigManager
 https://github.com/sinai-dev/BepInExConfigManager/releases
+
+
+# input 
+
+gamefolder\BepInEx\plugins
+

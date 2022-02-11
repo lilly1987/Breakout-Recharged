@@ -159,9 +159,10 @@ namespace MyFirstPlugin
         {
             var v = __instance.transform.localPosition;
 
-            if (v.x < -10 || v.x > 10)
+            if (v.x < -10 || v.x > 10|| v.y > 10)
             {
                 v.x = 0;
+                v.y = 0;
                 __instance.transform.localPosition = v;
             }
 

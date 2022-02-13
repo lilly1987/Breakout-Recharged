@@ -7,12 +7,15 @@ https://youtu.be/DZYG9Qf7sXw
 https://builds.bepinex.dev/projects/bepinex_be
 https://builds.bepinex.dev/projects/bepinex_be/546/BepInEx_UnityIL2CPP_x64_1504d80_6.0.0-be.546.zip
 
-- BepInExConfigManager.Il2Cpp
+- BepInExConfigManager.Il2Cpp  
 https://github.com/sinai-dev/BepInExConfigManager
 https://github.com/sinai-dev/BepInExConfigManager/releases
 
+- MyFirstPlugin.dll   
+https://github.com/lilly1987/Breakout-Recharged/releases  
 
-# input 
+# how to use
 
-gamefolder\BepInEx\plugins
+BepInEx_UnityIL2CPP_x64 , BepInExConfigManager.Il2Cpp unzip to gamefolder  
+MyFirstPlugin.dll to gamefolder\BepInEx\plugins
 
